@@ -48,16 +48,15 @@ void printDataAsHex(unsigned char *data, size_t size) {
 
   }
 
-  if(size < 16) {
+  if(size < 16) { //Fill the remaining space with spaces (if required)
     for(int i = size; i < 16; i++) {
       printf("  ");
     
-      if(i % 2 == 1){
-        printf(" "); //Seperate every two bytes
-      }	     //Fill up with zeros
+      if(i % 2 == 1 && i != size){ //Seperate every two bytes (don't do it again if we're on the first iter)
+        printf(" ");
+      }
     }
   }
-
 }
 
 /**
@@ -100,8 +99,6 @@ void printDataAsBits(unsigned char *data, size_t size) {
 /**
  * Writes data to stdout as characters.
  *
- * See myxxd.md for details.
- *
  * data: an array of no more than 16 characters
  * size: the size of the array
  **/
@@ -109,15 +106,14 @@ void printDataAsChars(unsigned char *data, size_t size) {
 
   for(int i = 0; i < size; i++) {
 
-    if(data[i] >= 32 && data[i] <= 126) {
+    if(data[i] >= 32 && data[i] <= 126) { //If between printable values
       printf("%c", data[i]);
     }
-    else { 
-      printf("."); //Add period on the last line
+    else { //If not printable
+      printf(".");
     }
 
   }
-
 }
 
 /**
