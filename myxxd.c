@@ -6,9 +6,6 @@
 #define FALSE 0
 #define BAD_NUMBER_ARGS 1
 
-//To check on: Magic numbers? (16, 32, 126)
-//Standardize formatiing (spaces between {( )
-
 /**
  * Parses the command line.
  *
@@ -39,22 +36,20 @@ FILE *parseCommandLine(int argc, char **argv, int *bits) {
 /**
  * Writes data to stdout in hexadecimal.
  *
- * See myxxd.md for details.
- *
  * data: an array of no more than 16 characters
  * size: the size of the array
  **/
 void printDataAsHex(unsigned char *data, size_t size) {
-  for(int i = 0; i < size; i++){
-    if(i % 2 == 0){
+  for(int i = 0; i < size; i++) {
+    if(i % 2 == 0) {
       printf(" "); //Seperate every two bytes
     }	
     printf("%02x", data[i]);
 
   }
 
-  if(size != 16){
-    for(int i = size; i < 16; i++){
+  if(size < 16) {
+    for(int i = size; i < 16; i++) {
       printf("  ");
     
       if(i % 2 == 1){
@@ -65,27 +60,40 @@ void printDataAsHex(unsigned char *data, size_t size) {
 
 }
 
-char* decimalToBinary(int decimalNum){
+/**
+ * Algorithm to convert and print a decimal number to binary
+ **/
+void printDecimalInBinary(int decimalNum) {
   char binaryNum[8] = "00000000";
   int powerOfTwoIndex = 0;
 
-  while(decimalNum > 0){
-    if(decimalNum % 2 == 1){
-      binaryNum[7 - powerOfTwoIndex] = '1';
+  while(decimalNum > 0) { //Decimal to binary algorithm
+    if(decimalNum % 2 == 1) {
+      binaryNum[7 - powerOfTwoIndex] = '1'; //Place the least sig digit at the end of the array
     }
 
     decimalNum = decimalNum / 2;
     powerOfTwoIndex++;
   }
   
-  printf("%s", binaryNum);
-  return &binaryNum;
+  printf(" %s", binaryNum);
 }
 
-/*Put some comment here*/
-void printDataAsBits(unsigned char *data, size_t size){
-  for(int i = 0; i < size; i++){
-    printf("%s ", decimalToBinary(data[i]));
+/**
+ * Writes data to stdout in binary.
+ *
+ * data: an array of no more than 8 characters
+ * size: the size of the array
+ **/
+void printDataAsBits(unsigned char *data, size_t size) {
+  for(int i = 0; i < size; i++) {
+    printDecimalInBinary(data[i]);
+  }
+
+  if(size < 6) { //Fill the remaining space with spaces (if required)
+    for(int i = size; i < 6; i++){
+      printf("         ");
+    }
   }
 }
 
@@ -97,31 +105,26 @@ void printDataAsBits(unsigned char *data, size_t size){
  * data: an array of no more than 16 characters
  * size: the size of the array
  **/
-void printDataAsChars(unsigned char *data, size_t size){
+void printDataAsChars(unsigned char *data, size_t size) {
 
-  for(int i = 0; i < size; i++){
+  for(int i = 0; i < size; i++) {
 
-    if(data[i] >= 32 && data[i] <= 126){
+    if(data[i] >= 32 && data[i] <= 126) {
       printf("%c", data[i]);
     }
-    else{ 
+    else { 
       printf("."); //Add period on the last line
-      
-      if(data[i] == 0x0a){
-        break; //Should we break here?
-      }
     }
 
-  }
-
-  if(size != 16){
-    for(int i = size; i < 16; i++){
-    //Fill up with zeros
-    }
   }
 
 }
 
+/**
+ * Reads input and prints in hex
+ *
+ * input: input stream
+ **/
 void readAndPrintInputAsHex(FILE *input) {
   unsigned char data[16];
   int numBytesRead = fread(data, 1, 16, input);
@@ -138,9 +141,7 @@ void readAndPrintInputAsHex(FILE *input) {
 }
 
 /**
- * Bits output for xxd.
- *
- * See myxxd.md for details.
+ * Reads input and prints in bits
  *
  * input: input stream
  **/
